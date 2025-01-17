@@ -1,0 +1,23 @@
+<div class="row">
+    <div class="panel panel-default">
+        <div class="panel-heading clearfix">
+            <button class="btn btn-success btn-sm pull-right" style="margin-top: 5%;">New Contact</button>
+            <h2 class="pull-left">Contacts</h2>
+        </div>
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a href="#" class="list-group-item clearfix" *ngFor="let contact of contacts">
+                        <div class="pull-left">
+                            <h4 class="list-group-item-heading">{{contact.name}}</h4>
+                        </div>
+                        <span class="pull-right">
+                            <img [src]="contact.imageUrl" src="../../../assets/images/barzeer.jpg"
+                                alt="{{contact.name}}" class="img-responsive" style="max-height: 100px;">
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
