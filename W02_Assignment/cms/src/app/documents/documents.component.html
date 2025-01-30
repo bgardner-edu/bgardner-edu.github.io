@@ -1,9 +1,12 @@
 <div class="row">
-    <div class="col-md-5">
-    <cms-document-list></cms-document-list>
-    </div>
-  
+  <div class="col-md-5">
+    <cms-document-list (selectedDocumentEvent)="onDocumentDetails($event)"></cms-document-list>
+  </div>
+
   <div class="col-md-4">
-  <cms-contact-detail></cms-contact-detail>
+    <cms-document-detail *ngIf="selectedDocument else empty" [document]="selectedDocument"></cms-document-detail>
+    <ng-template #empty>
+      <p>Please Select a Document</p>
+    </ng-template>
   </div>
-  </div>
+</div>
