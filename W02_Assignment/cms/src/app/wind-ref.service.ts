@@ -8,6 +8,7 @@ export class WindRefService {
    constructor() {}
 
    getNativeWindow() {
+      console.log(window);
       return window;
    }
 }
