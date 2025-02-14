@@ -9,8 +9,4 @@ import { Component } from '@angular/core';
 export class AppComponent {
   title = 'cms';
   selectedOption = "messages";
-
-  navigate(option: string){
-    this.selectedOption = option;
-  }
 }

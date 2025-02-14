@@ -6,7 +6,7 @@
     </div>
     <div class="col-md-7">
         <div class="col-md-12">
-            <cms-contact-detail *ngIf="selectedContact else empty" [contact]="selectedContact"></cms-contact-detail>
+            <router-outlet></router-outlet>
             <ng-template #empty>
                 <p>Please Select a Contact</p>
             </ng-template>

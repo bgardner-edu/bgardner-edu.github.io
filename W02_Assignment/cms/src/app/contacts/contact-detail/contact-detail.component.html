@@ -5,8 +5,8 @@
                 <h2 class="">{{contact.name}}</h2>
             </div>
             <img [src]="contact.imageUrl">
-            <button class="btn btn-danger btn-sm pull-right">Delete</button>
-            <button class="btn btn-primary btn-sm pull-right">Edit</button>
+            <a class="btn btn-danger btn-sm pull-right"(click)="onDelete()">Delete</a>
+            <a class="btn btn-primary btn-sm pull-right" routerLink="edit">Edit</a>
         </div>
         <div class="panel-body">
             <p><strong class="bold">Email: </strong>{{contact.email}}</p>
