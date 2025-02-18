@@ -22,7 +22,7 @@ export class DocumentDetailComponent implements OnInit {
     private windRef: WindRefService) { }
 
   ngOnInit() {
-    this.nativeWindow, this.windRef.getNativeWindow();
+    this.nativeWindow = this.windRef.getNativeWindow();
     this.activatedRoute.params.subscribe(
       (params: Params) => {
         this.id = params['id'];
@@ -32,7 +32,7 @@ export class DocumentDetailComponent implements OnInit {
   }
   onView() {
     if (this.document.url) {
-      window.open(this.document.url);
+      this.nativeWindow.open(this.document.url);
     }
   }
   onDelete() {
