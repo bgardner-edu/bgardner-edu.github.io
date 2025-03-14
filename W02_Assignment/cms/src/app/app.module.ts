@@ -25,7 +25,7 @@ import { DocumentEditComponent } from './documents/document-edit/document-edit.c
 import { WindRefService } from './wind-ref.service';
 import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
 import { ContactsFilterPipe } from './contacts/contacts-filter.pipe';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -59,7 +59,8 @@ import { HttpClientModule } from '@angular/common/http';
     ContactService,
     DocumentService,
     MessageService,
-    WindRefService
+    WindRefService,
+    [provideHttpClient(withFetch())]
   ],
   bootstrap: [AppComponent]
 })
