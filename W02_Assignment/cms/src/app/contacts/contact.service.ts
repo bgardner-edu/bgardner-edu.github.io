@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
     providedIn: 'root'
 })
 export class ContactService {
-    baseURL = 'https://wdd430project-default-rtdb.firebaseio.com/contacts.json';
+    baseURL = 'http://localhost:3000/contact';
     contacts: Contact[] = [];
     maxContactId: number;
     contactSelectedEvent = new EventEmitter<Contact>();
@@ -20,9 +20,9 @@ export class ContactService {
     }
 
     getContacts(): Contact[] {
-        this.http.get<Contact[]>(this.baseURL).subscribe(
-            (contacts: Contact[]) => {
-                this.contacts = contacts;
+        this.http.get<{message: string, contacts: Contact[]}>(this.baseURL).subscribe(
+            (responseData) => {
+                this.contacts = responseData.contacts;
                 this.maxContactId = this.getMaxId();
                 this.contactListChangedEvent.next(this.contacts.slice());
             },
@@ -32,7 +32,6 @@ export class ContactService {
         );
         return this.contacts.slice();
     }
-    
 
     getContact(id: string) {
         for (let contact of this.contacts) {
@@ -42,16 +41,26 @@ export class ContactService {
         }
         return null;
     }
+
     deleteContact(contact: Contact) {
         if (!contact) {
             return;
         }
-        const pos = this.contacts.indexOf(contact);
+
+        const pos = this.contacts.findIndex(d => d.id === contact.id);
+
         if (pos < 0) {
             return;
         }
-        this.contacts.splice(pos, 1);
-        this.storeContacts();
+
+        // delete from database
+        this.http.delete('http://localhost:3000/contact/' + contact.id)
+            .subscribe(
+                (response: Response) => {
+                    this.contacts.splice(pos, 1);
+                    this.sortAndSend();
+                }
+            );
     }
 
 
@@ -59,23 +68,51 @@ export class ContactService {
         if (!newContact) {
             return;
         }
-        this.maxContactId++;
-        newContact.id = String(this.maxContactId);
-        this.contacts.push(newContact);
-        this.storeContacts();
+
+        // make sure id of the new contact is empty
+        newContact.id = '';
+
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        // add to database
+        this.http.post<{ message: string, contact: Contact }>('http://localhost:3000/contact',
+            newContact,
+            { headers: headers })
+            .subscribe(
+                (responseData) => {
+                    // add new contact to contacts
+                    this.contacts.push(responseData.contact);
+                    this.sortAndSend();
+                }
+            );
     }
 
     updateContact(originalContact: Contact, newContact: Contact) {
         if (!originalContact || !newContact) {
             return;
         }
-        const pos = this.contacts.indexOf(originalContact);
+
+        const pos = this.contacts.findIndex(d => d.id === originalContact.id);
+
         if (pos < 0) {
             return;
         }
+
+        // set the id of the new Contact to the id of the old Contact
         newContact.id = originalContact.id;
-        this.contacts[pos] = newContact;
-        this.storeContacts();
+        //newContact._id = originalContact._id;
+
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        // update database
+        this.http.put('http://localhost:3000/contact/' + originalContact.id,
+            newContact, { headers: headers })
+            .subscribe(
+                (response: Response) => {
+                    this.contacts[pos] = newContact;
+                    this.sortAndSend();
+                }
+            );
     }
 
     storeContacts() {
@@ -88,6 +125,11 @@ export class ContactService {
                 this.contactListChangedEvent.next(this.contacts.slice());
             }
         );
+    }
+
+    sortAndSend() {
+        this.contacts.sort((a, b) => (a.name < b.name) ? -1 : 1);
+        this.contactChangedEvent.next(this.contacts.slice());
     }
 
     private getMaxId(): number {

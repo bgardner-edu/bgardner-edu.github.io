@@ -9,7 +9,7 @@ import { Subject } from "rxjs";
     providedIn: 'root'
 })
 export class MessageService {
-    baseURL = 'https://wdd430project-default-rtdb.firebaseio.com/messages.json';
+    baseURL = 'http://localhost:3000/message';
     messages: Message[] = [];
     maxMessageId: number;
     messageChangedEvent = new Subject<Message[]>();
@@ -19,9 +19,9 @@ export class MessageService {
     }
 
     getMessages() {
-        this.http.get<Message[]>(this.baseURL).subscribe(
-            (messages: Message[]) => {
-                this.messages = messages;
+        this.http.get<{message: string, messages: Message[] }>(this.baseURL).subscribe(
+            (responseData) => {
+                this.messages = responseData.messages;
                 this.maxMessageId = this.getMaxId();
                 this.messages.sort((a, b) => (a.id < b.id) ? -1 : 1);
                 this.messageChangedEvent.next(this.messages.slice());
@@ -43,9 +43,27 @@ export class MessageService {
     }
 
     addMessage(message: Message) {
-        this.messages.push(message);
-        this.storeMessages();
-    }
+        if (!message) {
+            return;
+          }
+      
+          // make sure id of the new Document is empty
+          message.id = '';
+      
+          const headers = new HttpHeaders({'Content-Type': 'application/json'});
+      
+          // add to database
+          this.http.post<{ message: string, resMessage: Message }>('http://localhost:3000/message',
+            document,
+            { headers: headers })
+            .subscribe(
+              (responseData) => {
+                // add new document to documents
+                this.messages.push(responseData.resMessage);
+                this.messageChangedEvent.next(this.messages.slice());
+              }
+            );
+        }
 
     storeMessages() {
         let messages = JSON.stringify(this.messages);
@@ -54,6 +72,11 @@ export class MessageService {
         }).subscribe(() => {
             this.messageChangedEvent.next(this.messages.slice());
         });
+    }
+
+    sortAndSend() {
+        this.messages.sort((a, b) => (a.sender < b.sender) ? -1 : 1);
+        this.messageChangedEvent.next(this.messages.slice());
     }
 
     getMaxId(): number {
