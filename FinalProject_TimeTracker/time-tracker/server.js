@@ -8,6 +8,7 @@ var mongoose = require('mongoose');
 
 // import the routing file to handle the default (index) route
 var index = require('./server/routes/app');
+const entryRoutes = require('./server/routes/entry');
 
 // establish a connection to the mongo database
 mongoose.connect('mongodb+srv://TestNode:BPIxkEd0tcUvCiXJ@cluster0.wwfha.mongodb.net/time-tracker')
@@ -43,7 +44,7 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/', index);
-//app.use('/message', messageRoutes);
+app.use('/api/entries', entryRoutes);
 
 // Tell express to use the specified director as the
 // root directory for your web site

@@ -1,0 +1,24 @@
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="document-edit">
+            <div class="row">
+                <div class="col-sm-12 form-group">
+                    <label for="startDate">Start Time</label>
+                    <input type="datetime-local" id="startDate" class="form-control" #startDate>
+                </div>
+
+                <div class="col-sm-12 form-group">
+                    <label for="endDate">End Time</label>
+                    <input type="datetime-local" id="endDate" class="form-control" #endDate>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button class="btn btn-success" type="submit" (click)="onSaveEntry()">Send</button>
+                    <button class="btn btn-danger" type="button" (click)="onClear()">Clear</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
