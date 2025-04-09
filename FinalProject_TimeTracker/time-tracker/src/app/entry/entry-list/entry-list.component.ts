@@ -3,11 +3,12 @@ import { Entry } from '../entry.model';
 import { EntryService } from '../entry.service';
 import { EntryItemComponent } from "../entry-item/entry-item.component";
 import { CommonModule } from '@angular/common';
-import { EntryEditComponent } from '../entry-edit/entry-edit.component';
+import { RouterModule } from '@angular/router';
+import { EntryEditComponent } from "../entry-edit/entry-edit.component";
 
 @Component({
   selector: 'app-entry-list',
-  imports: [EntryItemComponent, CommonModule, EntryEditComponent],
+  imports: [EntryItemComponent, CommonModule, RouterModule, EntryEditComponent],
   templateUrl: './entry-list.component.html',
   styleUrl: './entry-list.component.css'
 })

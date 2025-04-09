@@ -8,7 +8,7 @@ import { Subject } from "rxjs";
     providedIn: 'root'
 })
 export class EntryService {
-    baseURL = 'http://localhost:3000/api/entries';
+    baseURL = 'http://localhost:3000/api/entries/';
     entries: Entry[] = [];
     maxEntryId: number;
     EntryChangedEvent = new Subject<Entry[]>();
@@ -18,12 +18,13 @@ export class EntryService {
     }
 
     getEntries() {
-        this.http.get<{message: string, entries: Entry[] }>(this.baseURL).subscribe(
+        this.http.get<{ message: string, entries: Entry[] }>(this.baseURL).subscribe(
             (responseData) => {
                 this.entries = responseData.entries
                 this.maxEntryId = this.getMaxId();
                 this.entries.sort((a, b) => (a.id < b.id) ? -1 : 1);
                 this.EntryChangedEvent.next(this.entries.slice());
+                console.log(this.entries);
             },
             (error: any) => {
                 console.error(error);
@@ -32,36 +33,34 @@ export class EntryService {
         return this.entries.slice();
     }
 
-    // getMessage(id: string) {
-    //     for (let message of this.entries) {
-    //         if (message.id === id) {
-    //             return message;
-    //         }
-    //     }
-    //     return null;
-    // }
+    getEntry(id: string) {
+        for (let entry of this.entries) {
+            if (entry.id === id) {
+                return entry;
+            }
+        }
+        return null;
+    }
 
     addEntry(entry: Entry) {
         if (!entry) {
             return;
-          }
-      
-          // make sure id of the new Document is empty
-          entry.id = '';
-      
-          const headers = new HttpHeaders({'Content-Type': 'application/json'});
-      
-          // add to database
-          this.http.post<{ message: string, resEntry: Entry }>(this.baseURL,
+        }
+        entry.id = '';
+
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        // add to database
+        this.http.post<{ message: string, resEntry: Entry }>(this.baseURL,
             entry,
             { headers: headers })
             .subscribe(
-              (responseData) => {
-                this.entries.push(responseData.resEntry);
-                this.EntryChangedEvent.next(this.entries.slice());
-              }
+                (responseData) => {
+                    this.entries.push(responseData.resEntry);
+                    this.EntryChangedEvent.next(this.entries.slice());
+                }
             );
-        }
+    }
 
     storeEntries() {
         let entries = JSON.stringify(this.entries);
@@ -72,8 +71,57 @@ export class EntryService {
         });
     }
 
+    deleteEntry(entry: Entry) {
+        if (!entry) {
+            return;
+        }
+
+        const pos = this.entries.findIndex(d => d.id === entry.id);
+
+        if (pos < 0) {
+            return;
+        }
+
+        // delete from database
+        this.http.delete(this.baseURL + entry.id)
+            .subscribe(
+                (response: any) => {
+                    this.entries.splice(pos, 1);
+                    this.sortAndSend();
+                }
+            );
+    }
+
+    editingEntry(originalEntry: Entry, newEntry: Entry) {
+        if (!originalEntry || !newEntry) {
+            return;
+        }
+
+        const pos = this.entries.findIndex(d => d.id === originalEntry.id);
+
+        if (pos < 0) {
+            return;
+        }
+
+        // set the id of the new Contact to the id of the old Contact
+        newEntry.id = originalEntry.id;
+        //newContact._id = originalContact._id;
+
+        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+
+        // update database
+        this.http.put(this.baseURL + originalEntry.id,
+            newEntry, { headers: headers })
+            .subscribe(
+                (response: any) => {
+                    this.entries[pos] = newEntry;
+                    this.sortAndSend();
+                }
+            );
+    }
+
     sortAndSend() {
-        this.entries.sort((a, b) => (a.startTime < b.startTime) ? -1 : 1);
+        this.entries.sort((a, b) => (a.startDate < b.startDate) ? -1 : 1);
         this.EntryChangedEvent.next(this.entries.slice());
     }
 

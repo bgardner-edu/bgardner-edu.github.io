@@ -1,7 +1,9 @@
 var Sequence = require('../models/sequence');
+const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 
 var maxEntryId;
-var sequenceId = null;
+const sequenceId = new ObjectId("67db92e0201ca84f004c9aa2");
 
 function SequenceGenerator() {
   Sequence.findOne().exec()
@@ -11,7 +13,6 @@ function SequenceGenerator() {
       return;
     }
 
-    this.sequenceId = sequence._id;
     this.maxEntryId = sequence.maxEntryId;
   })
   .catch(err => {
@@ -27,7 +28,7 @@ SequenceGenerator.prototype.nextId = function(collectionType) {
   switch (collectionType) {
     case 'entries':
       this.maxEntryId++;
-      updateObject = {maxMessageId: this.maxEntryId};
+      updateObject = {maxEntryId: this.maxEntryId};
       nextId = this.maxEntryId;
       break;
     default:

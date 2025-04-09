@@ -1,6 +1,10 @@
-<a class="list-group-item clearfix">
-    <div class="">
-        <span class="messageHeader">{{item.startTime}}</span>
-        <div class="messageText">{{item.startTime}}</div>
-    </div>
-</a>
+<tr>
+    <td>{{ item?.startDate | date: 'short' }}</td>
+    <td>{{ item?.endDate | date: 'short' }}</td>
+    <td>{{ item?.total }}</td>
+    <td>
+        <a class="btn btn-sm btn-primary" [routerLink]="['/entries', item?.id]">Edit</a>
+      <button class="btn btn-sm btn-danger" (click)="onDeleteEntry()">Delete</button>
+    </td>
+</tr>
+  

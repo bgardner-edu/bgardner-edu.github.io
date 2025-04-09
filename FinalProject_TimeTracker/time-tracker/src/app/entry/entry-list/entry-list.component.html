@@ -1,22 +1,29 @@
 <div class="row">
-    <div class="col-md-5">
-       <div class="panel panel-default">
-          <div class="panel-heading">
-             <div class="row pad-left-right">
-                <h2 class="title pull-left">Entries</h2>
-             </div>
-          </div>
-          <div class="panel-body">
-             <div class="row">
-                <div class="col-xs-12">
-                   <app-entry-item *ngFor="let entry of entries" [item]="entry"></app-entry-item>
-                </div>
-             </div>
-          </div>
-          <div class="panel-footer">
-             <!-- <app-entry-edit (add)="addEntry($event)"></app-entry-edit> -->
-             <app-entry-edit></app-entry-edit>
-          </div>
-       </div>
-    </div>
- </div>
+   <div class="col-md-5">
+      <div class="panel panel-default">
+         <div class="panel-heading">
+            <div class="row pad-left-right">
+               <h2 class="title pull-left">Entries</h2>
+            </div>
+         </div>
+         <div class="panel-body">
+            <table class="table table-striped">
+               <thead>
+                  <tr>
+                     <th>Start Time</th>
+                     <th>End Time</th>
+                     <th>Total</th>
+                     <th>Options</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <app-entry-item *ngFor="let entry of entries" [item]="entry"></app-entry-item>
+               </tbody>
+            </table>
+         </div>
+         <div class="panel-footer">
+            <app-entry-edit></app-entry-edit>
+         </div>
+      </div>
+   </div>
+</div>
